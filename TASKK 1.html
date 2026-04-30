@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KASHIQUÉ NOIRÉ — Chocolates</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cacao: #1a0a00;
+    --dark-choc: #2d1200;
+    --milk-choc: #6b3a1f;
+    --caramel: #c47a2b;
+    --gold: #e8a840;
+    --cream: #f5efe4;
+    --off-white: #faf7f2;
+    --text-main: #1a0a00;
+    --text-light: #6b5c4e;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--off-white);
+    color: var(--text-main);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* Custom Cursor */
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--caramel);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.15s ease, width 0.2s, height 0.2s;
+    transform: translate(-50%, -50%);
+  }
+  .cursor-ring {
+    width: 36px; height: 36px;
+    border: 1.5px solid var(--caramel);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.08s ease, width 0.2s, height 0.2s, opacity 0.2s;
+    transform: translate(-50%, -50%);
+    opacity: 0.6;
+  }
+  .cursor.expanded { width: 20px; height: 20px; }
+  .cursor-ring.expanded { width: 60px; height: 60px; opacity: 0.3; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 1.5rem 4rem;
+    mix-blend-mode: normal;
+    transition: background 0.4s, padding 0.4s;
+  }
+  nav.scrolled {
+    background: rgba(26,10,0,0.96);
+    backdrop-filter: blur(10px);
+    padding: 1rem 4rem;
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    text-decoration: none;
+  }
+  .nav-links { display: flex; gap: 2.5rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  .nav-links a:hover { opacity: 1; }
+  .nav-cta {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cacao);
+    background: var(--gold);
+    padding: 0.6rem 1.5rem;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-cta:hover { background: var(--caramel); transform: scale(1.03); }
+
+  /* HERO */
+  .hero {
+    min-height: 100vh;
+    background: var(--cacao);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero-left {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 8rem 4rem 4rem 4rem;
+    position: relative;
+    z-index: 2;
+  }
+  .hero-tag {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.3s forwards;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 7vw, 8rem);
+    font-weight: 900;
+    line-height: 0.9;
+    color: var(--cream);
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.5s forwards;
+  }
+  .hero-title em {
+    font-style: italic;
+    color: var(--gold);
+  }
+  .hero-sub {
+    font-size: 1rem;
+    color: rgba(245,239,228,0.6);
+    max-width: 380px;
+    line-height: 1.7;
+    margin-bottom: 3rem;
+    font-weight: 300;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.7s forwards;
+  }
+  .hero-actions {
+    display: flex; gap: 1.5rem; align-items: center;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.9s forwards;
+  }
+  .btn-primary {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--cacao);
+    background: var(--gold);
+    padding: 1rem 2.5rem;
+    border: none;
+    text-decoration: none;
+    font-weight: 500;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s;
+    cursor: none;
+  }
+  .btn-primary:hover { background: var(--caramel); transform: translateY(-2px); }
+  .btn-ghost {
+    font-size: 0.8rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--cream);
+    text-decoration: none;
+    opacity: 0.6;
+    border-bottom: 1px solid rgba(245,239,228,0.3);
+    padding-bottom: 2px;
+    transition: opacity 0.2s;
+  }
+  .btn-ghost:hover { opacity: 1; }
+
+  .hero-right {
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeIn 1.2s 0.4s forwards;
+  }
+  .hero-image-wrap {
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse at 60% 40%, #6b3a1f 0%, #2d1200 50%, #0d0500 100%);
+  }
+  /* Decorative chocolate circles */
+  .choc-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #8b5a35, #3d1c0a);
+  }
+  .choc-c1 { width: 420px; height: 420px; top: 50%; left: 50%; transform: translate(-50%,-50%); }
+  .choc-c2 { width: 280px; height: 280px; top: 50%; left: 50%; transform: translate(-50%,-50%); background: radial-gradient(circle at 35% 35%, #b07848, #5a2e10); }
+  .choc-c3 { width: 160px; height: 160px; top: 50%; left: 50%; transform: translate(-50%,-50%); background: radial-gradient(circle at 35% 35%, #d4a060, #8b4e20); }
+
+  .hero-shine {
+    position: absolute;
+    width: 2px;
+    height: 60%;
+    background: linear-gradient(to bottom, transparent, rgba(232,168,64,0.4), transparent);
+    top: 20%; left: 55%;
+    transform: rotate(-15deg);
+  }
+  .hero-percent {
+    position: absolute;
+    bottom: 3rem; right: 3rem;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 7rem;
+    color: rgba(232,168,64,0.12);
+    line-height: 1;
+    letter-spacing: -0.02em;
+    pointer-events: none;
+  }
+  .hero-scroll-hint {
+    position: absolute;
+    bottom: 3rem; left: 4rem;
+    font-size: 0.65rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgba(245,239,228,0.3);
+    display: flex; align-items: center; gap: 1rem;
+    opacity: 0;
+    animation: fadeIn 1s 1.5s forwards;
+  }
+  .scroll-line {
+    width: 40px; height: 1px;
+    background: rgba(245,239,228,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-line::after {
+    content: '';
+    position: absolute;
+    left: -100%; top: 0;
+    width: 100%; height: 100%;
+    background: var(--gold);
+    animation: scrollLine 2s 2s infinite;
+  }
+
+  /* MARQUEE */
+  .marquee-section {
+    background: var(--gold);
+    padding: 0.8rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .marquee-track {
+    display: inline-flex;
+    animation: marquee 18s linear infinite;
+  }
+  .marquee-item {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.2em;
+    color: var(--cacao);
+    padding: 0 2rem;
+  }
+  .marquee-dot {
+    display: inline-block;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--cacao);
+    vertical-align: middle;
+    opacity: 0.4;
+    margin: 0 0.5rem;
+  }
+
+  /* ABOUT STRIP */
+  .about-strip {
+    background: var(--dark-choc);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 70vh;
+    overflow: hidden;
+  }
+  .about-image-side {
+    position: relative;
+    background: #0d0500;
+    overflow: hidden;
+    min-height: 400px;
+  }
+  .about-image-bg {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 50% 60%, #5a3015 0%, #1a0800 70%);
+  }
+  .about-cocoa-art {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .big-cacao-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18rem;
+    color: rgba(232,168,64,0.06);
+    line-height: 1;
+    user-select: none;
+  }
+  .cacao-label {
+    position: absolute;
+    bottom: 3rem; left: 50%; transform: translateX(-50%);
+    text-align: center;
+  }
+  .cacao-label span {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+  }
+  .cacao-label p {
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,239,228,0.4);
+    margin-top: 0.3rem;
+  }
+  .about-text-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 5rem 4rem;
+  }
+  .section-eyebrow {
+    font-size: 0.65rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  .about-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 4rem);
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    font-weight: 700;
+  }
+  .about-title em { font-style: italic; color: var(--gold); }
+  .about-body {
+    font-size: 0.95rem;
+    color: rgba(245,239,228,0.55);
+    line-height: 1.8;
+    max-width: 440px;
+    font-weight: 300;
+    margin-bottom: 3rem;
+  }
+  .stats-row { display: flex; gap: 3rem; }
+  .stat-item {}
+  .stat-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.8rem;
+    color: var(--gold);
+    line-height: 1;
+    letter-spacing: 0.05em;
+  }
+  .stat-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(245,239,228,0.35);
+    margin-top: 0.2rem;
+  }
+
+  /* PRODUCTS */
+  .products-section {
+    background: var(--off-white);
+    padding: 7rem 4rem;
+  }
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+  }
+  .section-title-group {}
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 4.5rem);
+    font-weight: 900;
+    color: var(--cacao);
+    line-height: 1;
+  }
+  .section-title em { font-style: italic; }
+  .section-link {
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--milk-choc);
+    text-decoration: none;
+    border-bottom: 1px solid var(--milk-choc);
+    padding-bottom: 2px;
+    transition: color 0.2s;
+  }
+  .section-link:hover { color: var(--caramel); border-color: var(--caramel); }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2px;
+  }
+  .product-card {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 3/4;
+    cursor: none;
+  }
+  .product-card:first-child {
+    grid-row: span 2;
+    aspect-ratio: auto;
+  }
+  .product-bg {
+    position: absolute; inset: 0;
+    transition: transform 0.6s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .product-card:hover .product-bg { transform: scale(1.06); }
+
+  .bg-dark { background: radial-gradient(ellipse at 40% 30%, #3d1f0a 0%, #0d0500 100%); }
+  .bg-milk { background: radial-gradient(ellipse at 40% 30%, #8b5a35 0%, #3d1c0a 100%); }
+  .bg-gold { background: radial-gradient(ellipse at 40% 30%, #c47a2b 0%, #6b3a1f 100%); }
+  .bg-ruby { background: radial-gradient(ellipse at 40% 30%, #6b1a1a 0%, #1a0505 100%); }
+  .bg-white-choc { background: radial-gradient(ellipse at 40% 30%, #d4b896 0%, #8b6040 100%); }
+
+  .product-deco {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .product-circle-outer {
+    width: 180px; height: 180px;
+    border-radius: 50%;
+    border: 1px solid rgba(232,168,64,0.2);
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.6s, border-color 0.3s;
+  }
+  .product-card:hover .product-circle-outer {
+    transform: rotate(15deg) scale(1.05);
+    border-color: rgba(232,168,64,0.5);
+  }
+  .product-circle-inner {
+    width: 120px; height: 120px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, rgba(255,255,255,0.15), rgba(0,0,0,0.3));
+    border: 1px solid rgba(232,168,64,0.3);
+  }
+
+  .product-info {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 2rem;
+    background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, transparent 100%);
+    transform: translateY(20px);
+    transition: transform 0.4s;
+  }
+  .product-card:hover .product-info { transform: translateY(0); }
+  .product-type {
+    font-size: 0.6rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+  .product-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--cream);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+  }
+  .product-price {
+    font-size: 0.85rem;
+    color: rgba(245,239,228,0.6);
+    font-weight: 300;
+  }
+  .product-add {
+    position: absolute;
+    top: 1.5rem; right: 1.5rem;
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: none;
+    font-size: 1.4rem;
+    color: var(--cacao);
+    display: flex; align-items: center; justify-content: center;
+    cursor: none;
+    opacity: 0;
+    transform: scale(0.7);
+    transition: opacity 0.3s, transform 0.3s;
+    font-weight: 300;
+  }
+  .product-card:hover .product-add { opacity: 1; transform: scale(1); }
+  .product-add:hover { background: var(--caramel); }
+
+  /* PROCESS */
+  .process-section {
+    background: var(--cacao);
+    padding: 7rem 4rem;
+    overflow: hidden;
+  }
+  .process-header {
+    margin-bottom: 5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: end;
+  }
+  .process-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 4.5rem);
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1;
+  }
+  .process-title em { font-style: italic; color: var(--gold); }
+  .process-desc {
+    font-size: 0.9rem;
+    color: rgba(245,239,228,0.45);
+    line-height: 1.8;
+    font-weight: 300;
+  }
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2px;
+  }
+  .process-step {
+    background: rgba(255,255,255,0.03);
+    padding: 2.5rem 2rem;
+    border-top: 1px solid rgba(232,168,64,0.15);
+    transition: background 0.3s, border-color 0.3s;
+    cursor: none;
+  }
+  .process-step:hover {
+    background: rgba(232,168,64,0.06);
+    border-color: rgba(232,168,64,0.5);
+  }
+  .step-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 4rem;
+    color: rgba(232,168,64,0.12);
+    line-height: 1;
+    margin-bottom: 1.5rem;
+    letter-spacing: 0.05em;
+  }
+  .step-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .step-name {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    color: var(--cream);
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+  }
+  .step-desc {
+    font-size: 0.8rem;
+    color: rgba(245,239,228,0.4);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+
+  /* TASTING NOTES */
+  .tasting-section {
+    background: var(--cream);
+    padding: 7rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+  .tasting-left .section-eyebrow { color: var(--milk-choc); }
+  .tasting-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 3.5vw, 4rem);
+    font-weight: 900;
+    color: var(--cacao);
+    line-height: 1.05;
+    margin-bottom: 2rem;
+  }
+  .tasting-title em { font-style: italic; color: var(--caramel); }
+  .tasting-body {
+    font-size: 0.95rem;
+    color: var(--text-light);
+    line-height: 1.8;
+    font-weight: 300;
+    margin-bottom: 2.5rem;
+  }
+  .flavor-bars { display: flex; flex-direction: column; gap: 1.2rem; }
+  .flavor-row { display: flex; align-items: center; gap: 1rem; }
+  .flavor-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-light);
+    width: 80px;
+    flex-shrink: 0;
+  }
+  .flavor-bar-track {
+    flex: 1;
+    height: 2px;
+    background: rgba(107,58,31,0.15);
+    position: relative;
+    overflow: visible;
+  }
+  .flavor-bar-fill {
+    height: 100%;
+    background: var(--caramel);
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: transform 1.2s cubic-bezier(0.25,0.46,0.45,0.94);
+  }
+  .flavor-bar-fill.animated { transform: scaleX(1); }
+  .flavor-val {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--milk-choc);
+    width: 30px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .tasting-right {
+    position: relative;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tasting-visual {
+    width: 340px; height: 340px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 30%, #c47a2b, #3d1c0a);
+    position: relative;
+    box-shadow: 0 40px 100px rgba(107,58,31,0.25), inset 0 -20px 60px rgba(0,0,0,0.4);
+  }
+  .tasting-ring {
+    position: absolute;
+    inset: -20px;
+    border-radius: 50%;
+    border: 1px solid rgba(196,122,43,0.2);
+    animation: rotate 20s linear infinite;
+  }
+  .tasting-ring-2 {
+    position: absolute;
+    inset: -45px;
+    border-radius: 50%;
+    border: 1px dashed rgba(196,122,43,0.1);
+    animation: rotate 30s linear infinite reverse;
+  }
+  .tasting-center-text {
+    position: absolute;
+    inset: 0; display: flex;
+    flex-direction: column;
+    align-items: center; justify-content: center;
+    color: var(--cream);
+    text-align: center;
+  }
+  .tasting-pct {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 5rem;
+    line-height: 1;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+  }
+  .tasting-pct-label {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    opacity: 0.6;
+  }
+  .tasting-pct-sub {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1rem;
+    opacity: 0.7;
+    margin-top: 0.3rem;
+  }
+
+  /* QUOTE */
+  .quote-section {
+    background: var(--dark-choc);
+    padding: 8rem 4rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .quote-bg-text {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20vw;
+    color: rgba(232,168,64,0.04);
+    letter-spacing: -0.02em;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+  .quote-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.8rem, 3vw, 3.5rem);
+    font-style: italic;
+    color: var(--cream);
+    max-width: 900px;
+    margin: 0 auto 2rem;
+    line-height: 1.3;
+    position: relative;
+    z-index: 1;
+  }
+  .quote-author {
+    font-size: 0.7rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--gold);
+    position: relative;
+    z-index: 1;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: var(--gold);
+    padding: 7rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+  }
+  .cta-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.5rem, 4vw, 5rem);
+    font-weight: 900;
+    color: var(--cacao);
+    line-height: 1;
+  }
+  .cta-title em { font-style: italic; }
+  .cta-right { display: flex; flex-direction: column; gap: 1.5rem; }
+  .cta-body {
+    font-size: 1rem;
+    color: rgba(26,10,0,0.65);
+    line-height: 1.7;
+    font-weight: 300;
+  }
+  .cta-form { display: flex; gap: 0; }
+  .cta-input {
+    flex: 1;
+    padding: 1rem 1.5rem;
+    background: rgba(26,10,0,0.08);
+    border: 1px solid rgba(26,10,0,0.2);
+    border-right: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.9rem;
+    color: var(--cacao);
+    outline: none;
+    transition: background 0.2s;
+  }
+  .cta-input::placeholder { color: rgba(26,10,0,0.4); }
+  .cta-input:focus { background: rgba(26,10,0,0.12); }
+  .cta-submit {
+    padding: 1rem 2rem;
+    background: var(--cacao);
+    color: var(--cream);
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    cursor: none;
+    transition: background 0.2s;
+    font-weight: 500;
+  }
+  .cta-submit:hover { background: var(--dark-choc); }
+
+  /* FOOTER */
+  footer {
+    background: var(--cacao);
+    padding: 4rem 4rem 2rem;
+  }
+  .footer-top {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+    padding-bottom: 3rem;
+    border-bottom: 1px solid rgba(245,239,228,0.08);
+  }
+  .footer-brand {}
+  .footer-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.15em;
+    color: var(--cream);
+    margin-bottom: 1rem;
+  }
+  .footer-tagline {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 0.9rem;
+    color: rgba(245,239,228,0.4);
+    line-height: 1.6;
+    max-width: 240px;
+  }
+  .footer-col-title {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+  .footer-links { list-style: none; }
+  .footer-links li { margin-bottom: 0.75rem; }
+  .footer-links a {
+    font-size: 0.85rem;
+    color: rgba(245,239,228,0.4);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--cream); }
+  .footer-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .footer-copy {
+    font-size: 0.75rem;
+    color: rgba(245,239,228,0.2);
+    letter-spacing: 0.05em;
+  }
+  .footer-socials { display: flex; gap: 1.5rem; }
+  .footer-socials a {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgba(245,239,228,0.3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-socials a:hover { color: var(--gold); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+  @keyframes scrollLine {
+    from { left: -100%; }
+    to { left: 100%; }
+  }
+  @keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Scroll reveal */
+  .reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.8s ease, transform 0.8s ease;
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <a href="#" class="nav-logo">KASHIQUÉ NOIRÉ</a>
+  <ul class="nav-links">
+    <li><a href="#products">Collection</a></li>
+    <li><a href="#process">Craft</a></li>
+    <li><a href="#tasting">Tasting</a></li>
+    <li><a href="#about">Story</a></li>
+  </ul>
+  <a href="#" class="nav-cta" id="openCart">Shop Now</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <p class="hero-tag">Bean to Bar · Est. 2025</p>
+    <h1 class="hero-title">Dark<br><em>Obsession</em><br>Redefined</h1>
+    <p class="hero-sub">Single-origin artisan chocolates crafted in the dead of night, when the senses are sharpest and the flavors are darkest.</p>
+    <div class="hero-actions">
+      <a href="#products" class="btn-primary">Explore Collection</a>
+      <a href="#process" class="btn-ghost">Our Process</a>
+    </div>
+    <div class="hero-scroll-hint">
+      <div class="scroll-line"></div>
+      Scroll to discover
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="hero-image-wrap">
+      <div class="choc-circle choc-c1"></div>
+      <div class="choc-circle choc-c2"></div>
+      <div class="choc-circle choc-c3"></div>
+      <div class="hero-shine"></div>
+    </div>
+    <div class="hero-percent">85%</div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track">
+    <span class="marquee-item">Dark Chocolate</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Single Origin</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Bean to Bar</span><span class="marquee-dot"></span>
+    <span class="marquee-item">85% Cacao</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Artisan Craft</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Ecuador · Ghana · Madagascar</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Dark Chocolate</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Single Origin</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Bean to Bar</span><span class="marquee-dot"></span>
+    <span class="marquee-item">85% Cacao</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Artisan Craft</span><span class="marquee-dot"></span>
+    <span class="marquee-item">Ecuador · Ghana · Madagascar</span><span class="marquee-dot"></span>
+  </div>
+</div>
+
+<!-- ABOUT -->
+<section class="about-strip" id="about">
+  <div class="about-image-side">
+    <div class="about-image-bg"></div>
+    <div class="about-cocoa-art">
+      <div class="big-cacao-num">85</div>
+    </div>
+    <div class="cacao-label">
+      <span>Pure Cacao</span>
+      <p>The finest single-origin</p>
+    </div>
+  </div>
+  <div class="about-text-side">
+    <p class="section-eyebrow reveal">Our Philosophy</p>
+    <h2 class="about-title reveal reveal-delay-1">Where <em>darkness</em><br>meets desire</h2>
+    <p class="about-body reveal reveal-delay-2">We believe the best chocolate is made slowly, deliberately, and at night. Every bar begins with hand-selected cacao pods from family farms across three continents. We stone-grind each batch for 72 hours, coaxing out complexity that industrial methods destroy.</p>
+    <div class="stats-row reveal reveal-delay-3">
+      <div class="stat-item">
+        <div class="stat-num">72hrs</div>
+        <div class="stat-label">Stone Ground</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">3</div>
+        <div class="stat-label">Continents</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-num">12</div>
+        <div class="stat-label">Origins</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCTS -->
+<section class="products-section" id="products">
+  <div class="section-header reveal">
+    <div class="section-title-group">
+      <p class="section-eyebrow">Current Collection</p>
+      <h2 class="section-title">The <em>Dark</em> Series</h2>
+    </div>
+      </div>
+  <div class="products-grid">
+
+  <div class="product-card" data-name="Midnight Absolute" data-price="18">
+    <div class="product-bg bg-dark"></div>
+    <div class="product-deco">
+      <div class="product-circle-outer"><div class="product-circle-inner"></div></div>
+    </div>
+    <button class="product-add">+</button>
+    <div class="product-info">
+      <p class="product-type">Ecuador · 85%</p>
+      <h3 class="product-name">Midnight Absolute</h3>
+      <p class="product-price">$18 · 70g</p>
+    </div>
+  </div>
+
+  <div class="product-card" data-name="Golden Hour Milk" data-price="15">
+    <div class="product-bg bg-milk"></div>
+    <div class="product-deco">
+      <div class="product-circle-outer"><div class="product-circle-inner"></div></div>
+    </div>
+    <button class="product-add">+</button>
+    <div class="product-info">
+      <p class="product-type">Ghana · 42%</p>
+      <h3 class="product-name">Golden Hour Milk</h3>
+      <p class="product-price">$15 · 70g</p>
+    </div>
+  </div>
+
+  <div class="product-card" data-name="Ruby Nightshade" data-price="22">
+    <div class="product-bg bg-ruby"></div>
+    <div class="product-deco">
+      <div class="product-circle-outer"><div class="product-circle-inner"></div></div>
+    </div>
+    <button class="product-add">+</button>
+    <div class="product-info">
+      <p class="product-type">Madagascar · 72%</p>
+      <h3 class="product-name">Ruby Nightshade</h3>
+      <p class="product-price">$22 · 70g</p>
+    </div>
+  </div>
+
+  <div class="product-card" data-name="Caramel Velvet" data-price="16">
+    <div class="product-bg bg-gold"></div>
+    <div class="product-deco">
+      <div class="product-circle-outer"><div class="product-circle-inner"></div></div>
+    </div>
+    <button class="product-add">+</button>
+    <div class="product-info">
+      <p class="product-type">Peru · 68%</p>
+      <h3 class="product-name">Caramel Velvet</h3>
+      <p class="product-price">$16 · 70g</p>
+    </div>
+  </div>
+
+  <div class="product-card" data-name="Blonde Dusk" data-price="14">
+    <div class="product-bg bg-white-choc"></div>
+    <div class="product-deco">
+      <div class="product-circle-outer"><div class="product-circle-inner"></div></div>
+    </div>
+    <button class="product-add">+</button>
+    <div class="product-info">
+      <p class="product-type">Ivory · 30%</p>
+      <h3 class="product-name">Blonde Dusk</h3>
+      <p class="product-price">$14 · 70g</p>
+    </div>
+  </div>
+
+</div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section" id="process">
+  <div class="process-header">
+    <div>
+      <p class="section-eyebrow reveal" style="color:var(--gold)">The Craft</p>
+      <h2 class="process-title reveal reveal-delay-1">From <em>pod</em><br>to perfection</h2>
+    </div>
+    <p class="process-desc reveal reveal-delay-2">Every step is deliberate. Every decision is purposeful. We take no shortcuts on the path from cacao tree to your hands.</p>
+  </div>
+  <div class="process-steps">
+    <div class="process-step reveal">
+      <div class="step-num">01</div>
+      <div class="step-icon">🌱</div>
+      <h3 class="step-name">Harvest</h3>
+      <p class="step-desc">Hand-picked at peak ripeness from partner farms. Only pods with the deepest color and richest aroma make the cut.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-1">
+      <div class="step-num">02</div>
+      <div class="step-icon">🫘</div>
+      <h3 class="step-name">Ferment</h3>
+      <p class="step-desc">Seven days in wooden boxes, turning twice daily. This is where the flavor precursors are born.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-2">
+      <div class="step-num">03</div>
+      <div class="step-icon">⚙️</div>
+      <h3 class="step-name">Grind</h3>
+      <p class="step-desc">72 hours on granite stone rollers. Slow, cool, and constant. No shortcuts. No compromise.</p>
+    </div>
+    <div class="process-step reveal reveal-delay-3">
+      <div class="step-num">04</div>
+      <div class="step-icon">✨</div>
+      <h3 class="step-name">Temper</h3>
+      <p class="step-desc">The final dance of temperature and time. A perfectly tempered bar snaps with a sound you can feel in your chest.</p>
+    </div>
+  </div>
+</section>
+
+<!-- TASTING -->
+<section class="tasting-section" id="tasting">
+  <div class="tasting-left">
+    <p class="section-eyebrow reveal">Flavor Profile</p>
+    <h2 class="tasting-title reveal reveal-delay-1"><em>Midnight</em><br>Absolute<br>85% Cacao</h2>
+    <p class="tasting-body reveal reveal-delay-2">Smoky entrance, dried cherry mid-note, and a long finish of roasted espresso with the lightest whisper of cardamom. This is darkness with depth.</p>
+    <div class="flavor-bars reveal reveal-delay-3" id="flavorBars">
+      <div class="flavor-row">
+        <span class="flavor-label">Bitter</span>
+        <div class="flavor-bar-track"><div class="flavor-bar-fill" data-width="0.88"></div></div>
+        <span class="flavor-val">88%</span>
+      </div>
+      <div class="flavor-row">
+        <span class="flavor-label">Fruity</span>
+        <div class="flavor-bar-track"><div class="flavor-bar-fill" data-width="0.45"></div></div>
+        <span class="flavor-val">45%</span>
+      </div>
+      <div class="flavor-row">
+        <span class="flavor-label">Floral</span>
+        <div class="flavor-bar-track"><div class="flavor-bar-fill" data-width="0.28"></div></div>
+        <span class="flavor-val">28%</span>
+      </div>
+      <div class="flavor-row">
+        <span class="flavor-label">Earthy</span>
+        <div class="flavor-bar-track"><div class="flavor-bar-fill" data-width="0.62"></div></div>
+        <span class="flavor-val">62%</span>
+      </div>
+      <div class="flavor-row">
+        <span class="flavor-label">Smoky</span>
+        <div class="flavor-bar-track"><div class="flavor-bar-fill" data-width="0.74"></div></div>
+        <span class="flavor-val">74%</span>
+      </div>
+    </div>
+  </div>
+  <div class="tasting-right reveal reveal-delay-2">
+    <div class="tasting-visual">
+      <div class="tasting-ring"></div>
+      <div class="tasting-ring-2"></div>
+      <div class="tasting-center-text">
+        <div class="tasting-pct">85</div>
+        <div class="tasting-pct-label">% Cacao</div>
+        <div class="tasting-pct-sub">Ecuador</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- QUOTE -->
+<section class="quote-section">
+  <div class="quote-bg-text">NOIR</div>
+  <blockquote class="quote-text reveal">"Chocolate is not a treat. It is a ritual. A slow undressing of the senses that reveals something true about the world."</blockquote>
+  <p class="quote-author reveal reveal-delay-1">— Founder, KASHIQUÉ NOIRÉ Chocolates</p>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div>
+    <h2 class="cta-title reveal">Join the<br><em>Night</em><br>Society</h2>
+  </div>
+ <div class="cta-right">
+  <p class="cta-body reveal">
+    Be the first to taste new origins. Members receive exclusive bars, tasting notes, and invitations to our bi-monthly nocturnal tastings in the atelier.
+  </p>
+
+  <form class="cta-form reveal reveal-delay-1">
+    <input 
+      type="email" 
+      class="cta-input" 
+      placeholder="your@email.com" 
+      required 
+      aria-label="Email address"
+    >
+
+    <button type="submit" class="cta-submit">
+      Join Now
+    </button>
+  </form>
+
+  <p 
+    class="reveal reveal-delay-2"
+    style="font-size:0.7rem; color:rgba(26,10,0,0.4); letter-spacing:0.05em;"
+  >
+    No spam. Unsubscribe anytime. One email per month.
+  </p>
+</div>
+</section>
+
+<!-- FOOTER -->
+<footer> 
+  <div class="footer-top" style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 3rem; align-items: start;"> 
+
+    <div class="footer-brand"> 
+      <div class="footer-logo">KASHIQUÉ NOIRÉ</div> 
+      <p class="footer-tagline">
+        Artisan chocolate crafted in darkness, for those who seek depth in every bite.
+      </p> 
+    </div> 
+
+    <!-- CONTACT -->
+    <div> 
+      <h4 class="footer-col-title">Contact</h4> 
+      <ul class="footer-links"> 
+        <li><a href="https://kashiquenoire.com">kashiquenoire.com</a></li> 
+        <li><a href="tel:+971142683957">+971 142 683 957</a></li> 
+      </ul> 
+    </div> 
+
+    <!-- EXPLORE -->
+    <div> 
+      <h4 class="footer-col-title">Explore</h4> 
+      <ul class="footer-links"> 
+        <li><a href="#products">Collection</a></li> 
+        <li><a href="#process">Craft</a></li> 
+        <li><a href="#tasting">Tasting</a></li> 
+      </ul> 
+    </div> 
+
+  </div> 
+
+  <div class="footer-bottom"> 
+    <p class="footer-copy">
+      © 2025 KASHIQUÉ NOIRÉ Chocolate Co. All rights reserved.
+    </p> 
+  </div>
+</footer>
+
+<script>
+  // Custom cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    cursorRing.style.left = ringX + 'px';
+    cursorRing.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+
+  document.querySelectorAll('a, button').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.classList.add('expanded');
+      cursorRing.classList.add('expanded');
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.classList.remove('expanded');
+      cursorRing.classList.remove('expanded');
+    });
+  });
+
+  // Sticky nav
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 60);
+  });
+
+  // Intersection observer for reveals
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        // Animate flavor bars when visible
+        if (entry.target.id === 'flavorBars' || entry.target.closest('#flavorBars')) {
+          animateBars();
+        }
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Flavor bars animation
+  function animateBars() {
+    document.querySelectorAll('.flavor-bar-fill').forEach(bar => {
+      const width = parseFloat(bar.dataset.width);
+      bar.style.transform = `scaleX(${width})`;
+      bar.classList.add('animated');
+    });
+  }
+
+  // Watch the flavor bars section
+  const flavorSection = document.getElementById('flavorBars');
+  if (flavorSection) {
+    const barObserver = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) animateBars();
+    }, { threshold: 0.3 });
+    barObserver.observe(flavorSection);
+  }
+
+  // Product add button feedback
+  document.querySelectorAll('.product-add').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const original = this.textContent;
+      this.textContent = '✓';
+      this.style.background = '#1a0a00';
+      this.style.color = '#e8a840';
+      setTimeout(() => {
+        this.textContent = original;
+        this.style.background = '';
+        this.style.color = '';
+      }, 1200);
+    });
+  });
+
+  // CTA form
+  document.querySelector('.cta-submit').addEventListener('click', function() {
+    const input = document.querySelector('.cta-input');
+    if (input.value && input.value.includes('@')) {
+      this.textContent = 'Welcome ✓';
+      this.style.background = '#3d1c0a';
+      input.value = '';
+      setTimeout(() => {
+        this.textContent = 'Join Now';
+        this.style.background = '';
+      }, 3000);
+    }
+  });
+</script>
+<!-- CART DRAWER -->
+<div id="cartOverlay" style="position:fixed;inset:0;background:rgba(0,0,0,0.6);opacity:0;pointer-events:none;transition:0.3s;z-index:9998;"></div>
+
+<aside id="cartDrawer" style="
+position:fixed;
+top:0;
+right:-420px;
+width:380px;
+height:100vh;
+background:#1a0a00;
+color:#faf7f2;
+z-index:9999;
+transition:0.35s;
+padding:2rem;
+display:flex;
+flex-direction:column;
+">
+
+  <h2 style="font-family:'Playfair Display';margin-bottom:1rem;">Your Cart</h2>
+
+  <div id="cartItems" style="flex:1;overflow:auto;"></div>
+
+  <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:1rem;">
+    <p style="display:flex;justify-content:space-between;">
+      <span>Total</span>
+      <span id="cartTotal">$0</span>
+    </p>
+
+    <button id="checkoutBtn" style="
+  width:100%;
+  margin-top:1rem;
+  padding:1rem;
+  background:#e8a840;
+  border:none;
+  cursor:pointer;
+  font-weight:600;
+">
+  Checkout
+</button>
+  </div>
+</aside>
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+
+  // Cursor
+  const cursor = document.getElementById('cursor');
+  const cursorRing = document.getElementById('cursorRing');
+
+  let mouseX = 0, mouseY = 0;
+  let ringX = 0, ringY = 0;
+
+  document.addEventListener('mousemove', e => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    cursor.style.left = mouseX + 'px';
+    cursor.style.top = mouseY + 'px';
+window.increaseItem = function(name) {
+  cart[name].qty += 1;
+  renderCart();
+};
+
+window.decreaseItem = function(name) {
+  cart[name].qty -= 1;
+
+  if (cart[name].qty <= 0) {
+    delete cart[name];
+  }
+
+  renderCart();
+};
+
+window.removeItem = function(name) {
+  delete cart[name];
+  renderCart();
+};
+  });
+
+  function animateRing() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    cursorRing.style.left = ringX + 'px';
+    cursorRing.style.top = ringY + 'px';
+    requestAnimationFrame(animateRing);
+  }
+  animateRing();
+document.getElementById("checkoutBtn").addEventListener("click", () => {
+    const items = Object.values(cart);
+
+    if (items.length === 0) {
+      alert("Your cart is empty");
+      return;
+    }
+
+    let total = 0;
+
+    const message = encodeURIComponent(
+      "Hello KASHIQUÉ NOIRÉ,\n\n" +
+      "I would like to place an order:\n\n" +
+      items.map(i => {
+        total += i.price * i.qty;
+        return `• ${i.name} x${i.qty} — $${(i.price * i.qty).toFixed(2)}`;
+      }).join("\n") +
+      `\n\nTotal Amount: $${total.toFixed(2)}\n\n` +
+      "Please confirm availability and delivery details. Thank you."
+    );
+
+    const whatsappURL = `https://wa.me/971142683957?text=${message}`;
+    window.open(whatsappURL, "_blank");
+  });
+
+});
+  // CART
+  // ================= CART SYSTEM =================
+let cart = {};
+
+const cartDrawer = document.getElementById('cartDrawer');
+const cartOverlay = document.getElementById('cartOverlay');
+const cartItems = document.getElementById('cartItems');
+const cartTotal = document.getElementById('cartTotal');
+const checkoutBtn = document.getElementById('checkoutBtn');
+
+// OPEN / CLOSE CART
+function openCart() {
+  cartDrawer.style.right = "0";
+  cartOverlay.style.opacity = "1";
+  cartOverlay.style.pointerEvents = "auto";
+}
+
+function closeCart() {
+  cartDrawer.style.right = "-420px";
+  cartOverlay.style.opacity = "0";
+  cartOverlay.style.pointerEvents = "none";
+}
+
+document.getElementById('openCart').addEventListener('click', (e) => {
+  e.preventDefault();
+  openCart();
+});
+
+cartOverlay.addEventListener('click', closeCart);
+
+// ADD TO CART
+document.querySelectorAll('.product-add').forEach(btn => {
+  btn.addEventListener('click', function () {
+    const card = this.closest('.product-card');
+    const name = card.dataset.name;
+    const price = parseFloat(card.dataset.price);
+
+    if (!cart[name]) {
+      cart[name] = { name, price, qty: 1 };
+    } else {
+      cart[name].qty++;
+    }
+
+    renderCart();
+    openCart();
+
+    this.textContent = '✓';
+    setTimeout(() => this.textContent = '+', 800);
+  });
+});
+
+// ================= CART ACTIONS =================
+window.increaseItem = function(name) {
+  cart[name].qty++;
+  renderCart();
+};
+
+window.decreaseItem = function(name) {
+  cart[name].qty--;
+  if (cart[name].qty <= 0) delete cart[name];
+  renderCart();
+};
+
+window.removeItem = function(name) {
+  delete cart[name];
+  renderCart();
+};
+
+// ================= RENDER CART =================
+function renderCart() {
+  cartItems.innerHTML = "";
+  let total = 0;
+
+  Object.values(cart).forEach(item => {
+    total += item.price * item.qty;
+
+    const div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.justifyContent = "space-between";
+    div.style.alignItems = "center";
+    div.style.marginBottom = "1rem";
+
+    div.innerHTML = `
+      <div>
+        <p style="margin:0;">${item.name}</p>
+        <small style="opacity:0.6">$${item.price.toFixed(2)}</small>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button onclick="decreaseItem('${item.name}')">−</button>
+        <span>${item.qty}</span>
+        <button onclick="increaseItem('${item.name}')">+</button>
+        <button onclick="removeItem('${item.name}')">✕</button>
+      </div>
+    `;
+
+    cartItems.appendChild(div);
+  });
+
+  cartTotal.innerText = "$" + total.toFixed(2);
+}
+
+// ================= CHECKOUT =================
+checkoutBtn.addEventListener("click", () => {
+  const items = Object.values(cart);
+
+  if (items.length === 0) {
+    alert("Your cart is empty");
+    return;
+  }
+
+  let total = 0;
+
+  const message = encodeURIComponent(
+    "Hello KASHIQUÉ NOIRÉ,\n\n" +
+    "I would like to place an order:\n\n" +
+    items.map(i => {
+      total += i.price * i.qty;
+      return `• ${i.name} x${i.qty} — $${(i.price * i.qty).toFixed(2)}`;
+    }).join("\n") +
+    `\n\nTotal: $${total.toFixed(2)}\n\n` +
+    "Please confirm availability. Thank you."
+  );
+
+  window.open(`https://wa.me/971142683957?text=${message}`, "_blank");
+});
+</script>
+</body>
+</html>
